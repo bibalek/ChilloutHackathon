@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,6 +12,16 @@ public class GameManager : MonoBehaviour
     private RawConnectionManager connectionManager;
     [SerializeField]
     GameObject foldMsg;
+    [SerializeField]
+    GameObject foldButton;
+    [SerializeField]
+    GameObject raiseButton;
+    [SerializeField]
+    GameObject checkButton;
+    [SerializeField]
+    GameObject callButton;
+    [SerializeField]
+    Text moneyText;
 
     private bool handshake = false;
     private bool start = false;
@@ -20,6 +31,7 @@ public class GameManager : MonoBehaviour
     private void Start ()
     {
         menuManager = FindObjectOfType<MenuManager>();
+        StartCoroutine(ShowCards());
     }
 
     private void Update()
@@ -50,11 +62,16 @@ public class GameManager : MonoBehaviour
                     if (connectionManager.ptpHeader.integer == -5) Show5Cards();
                     if (connectionManager.ptpHeader.integer == -10) NewRound();
                 }
+                else
+                {
+                    UpdateMoney();
+                    UpdateButtons();
+                }
             }
         }   
     }
 
-  
+   
 
     public void Fold()
     {
@@ -68,11 +85,17 @@ public class GameManager : MonoBehaviour
 
     public void Raise()
     {
-      
+        PTPHeader msg = new PTPHeader(0, false, true, false, false, "");
+        string serializer = JsonUtility.ToJson(msg);
+        connectionManager.Send(serializer);
+        StartCoroutine(ShowFoldMsg());
     }
     public void Check()
     {
-        
+        PTPHeader msg = new PTPHeader(0, false, false, true, false, "");
+        string serializer = JsonUtility.ToJson(msg);
+        connectionManager.Send(serializer);
+        StartCoroutine(ShowFoldMsg());
     }
 
     public void Call()
@@ -127,9 +150,15 @@ public class GameManager : MonoBehaviour
         cards[6].SetActive(true);
     }
 
+    public void ShowEnemyCards()
+    {
+        cards[7].SetActive(true);
+        cards[8].SetActive(true);
+    }
+
     private IEnumerator ShowCards()
     {
-        SpawnCards("2C;TD;4C;KH;7C;8H;AC");
+        SpawnCards("2C;TD;4C;KH;7C;8H;AC;3C;5C");
         Show2Cards();
         yield return new WaitForSeconds(1);
         Show3Cards();
@@ -157,6 +186,31 @@ public class GameManager : MonoBehaviour
     private void StartGame()
     {
         menuManager.PlayerConnected();
+    }
+
+    private void UpdateButtons()
+    {
+        var colors = foldButton.GetComponent<Button>().colors;
+        colors.normalColor = connectionManager.ptpHeader.fold ? Color.white : Color.gray;
+        foldButton.GetComponent<BoxCollider>().enabled = connectionManager.ptpHeader.fold;
+
+        colors = raiseButton.GetComponent<Button>().colors;
+        colors.normalColor = connectionManager.ptpHeader.raise ? Color.white : Color.gray;
+        foldButton.GetComponent<BoxCollider>().enabled = connectionManager.ptpHeader.raise;
+
+        colors = checkButton.GetComponent<Button>().colors;
+        colors.normalColor = connectionManager.ptpHeader.check ? Color.white : Color.gray;
+        foldButton.GetComponent<BoxCollider>().enabled = connectionManager.ptpHeader.check;
+
+        colors = callButton.GetComponent<Button>().colors;
+        colors.normalColor = connectionManager.ptpHeader.call ? Color.white : Color.gray;
+        foldButton.GetComponent<BoxCollider>().enabled = connectionManager.ptpHeader.call;
+       
+    }
+
+    private void UpdateMoney()
+    {
+        //moneyText.text = connectionManager.ptpHeader.money.ToString();
     }
 
 }
