@@ -63,17 +63,20 @@ public class GameManager : MonoBehaviour
             {
                 SpawnCards(connectionManager.serializer.cards);
                 Show2Cards();
-                UpdateMoney(connectionManager.serializer.money);
+                money = connectionManager.serializer.money;
+                
                 myPot = connectionManager.serializer.isBigBlind ? 50 : 25;
                 isDealer = connectionManager.serializer.isDealer;
                 CalcToCall(pot);
                 money -= connectionManager.serializer.isBigBlind ? 50 : 25;
                 enemyMoney -= connectionManager.serializer.isBigBlind ? 25 : 50;
+                UpdateMoney();
                 handshake = true;
                 UpdatedBet();
             }
             if (connectionManager.update)
             {
+                UpdateMoney();
                 connectionManager.update = false;
                 if (connectionManager.ptpHeader.integer < 0)
                 {
@@ -251,10 +254,11 @@ public class GameManager : MonoBehaviour
        
     }
 
-    private void UpdateMoney(int newMoney)
-    {
-        money = newMoney;
-        moneyText.text = newMoney.ToString();
+    private void UpdateMoney()
+    {       
+        moneyText.text = money.ToString();
+        enemyMoneyText.text = enemyMoney.ToString();
+        potText.text = pot.ToString();
     }
 
     private void CalcToCall(int pot)
