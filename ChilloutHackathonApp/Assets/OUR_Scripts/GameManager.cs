@@ -24,7 +24,10 @@ public class GameManager : MonoBehaviour
         String[] cardNames = cardsName.Split(delimiter);
         for (int i = 0; i < cardNames.Length; i++)
         {
-            cards.Add((GameObject)Instantiate(Resources.Load("Cards/" + cardNames[i])));
+            var card = (GameObject)Instantiate(Resources.Load("Cards/" + cardNames[i]));
+            var cardParent = new GameObject();
+            card.transform.parent = cardParent.transform;
+            cards.Add(cardParent);
             cards[i].transform.position = playerCardsPoints[i].position;
             cards[i].transform.rotation = playerCardsPoints[i].rotation;
             cards[i].SetActive(false);
@@ -35,7 +38,7 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < 2; i++)
         {
-            cards[i].SetActive(true);
+            cards[i].SetActive(true);          
         }
     }
 
