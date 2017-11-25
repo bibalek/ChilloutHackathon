@@ -259,19 +259,22 @@ public class GameManager : MonoBehaviour
         var colors = foldButton.GetComponent<Button>().colors;
         colors.normalColor = connectionManager.ptpHeader.fold ? Color.white : Color.gray;
         foldButton.GetComponent<BoxCollider>().enabled = connectionManager.ptpHeader.fold;
+        foldButton.SetActive(connectionManager.ptpHeader.fold);
 
         colors = raiseButton.GetComponent<Button>().colors;
         colors.normalColor = connectionManager.ptpHeader.raise ? Color.white : Color.gray;
         raiseButton.GetComponent<BoxCollider>().enabled = connectionManager.ptpHeader.raise;
+        raiseButton.SetActive(connectionManager.ptpHeader.raise);
 
         colors = checkButton.GetComponent<Button>().colors;
         colors.normalColor = connectionManager.ptpHeader.check ? Color.white : Color.gray;
         checkButton.GetComponent<BoxCollider>().enabled = connectionManager.ptpHeader.check;
+        checkButton.SetActive(connectionManager.ptpHeader.check);
 
         colors = callButton.GetComponent<Button>().colors;
         colors.normalColor = connectionManager.ptpHeader.call ? Color.white : Color.gray;
         callButton.GetComponent<BoxCollider>().enabled = connectionManager.ptpHeader.call;
-       
+        callButton.SetActive(connectionManager.ptpHeader.call);
     }
 
     private void UpdateMoney()
