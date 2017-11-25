@@ -55,6 +55,7 @@ namespace VRStandardAssets.Utils
         // This overload of SetPosition is used when the VREyeRaycaster has hit anything with collider
         public void SetPositionOnCollider (RaycastHit hit)
         {
+            Debug.Log("nic nie uderzam konkretnego");
             reticleImage.transform.position = hit.point;
             animator.SetBool(ANIMATION_POPUP_BOOL, false);
         }
@@ -63,6 +64,7 @@ namespace VRStandardAssets.Utils
         // This overload of SetPosition is used when the VREyeRaycaster has hit interactable
         public void SetPosition (RaycastHit hit)
         {
+            Debug.Log("teraz tak");
             reticleImage.transform.position = hit.point;
             animator.SetBool(ANIMATION_POPUP_BOOL, true);
         }
