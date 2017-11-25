@@ -1434,7 +1434,8 @@ MonoBehaviour:
   - {fileID: 1864715893}
   - {fileID: 2094443474}
   - {fileID: 939701988}
-  cardsPoint: {fileID: 0}
+  connectionManager: {fileID: 1812404651}
+  foldMsg: {fileID: 0}
 --- !u!4 &595909399
 Transform:
   m_ObjectHideFlags: 0
@@ -5905,6 +5906,7 @@ Transform:
   m_Children:
   - {fileID: 1967250180}
   - {fileID: 595909399}
+  - {fileID: 1812404652}
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6357,6 +6359,49 @@ Prefab:
     - {fileID: 65592945724359520, guid: 9fccaf269a3d17c4dbffe3ca3b3a1f51, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 9fccaf269a3d17c4dbffe3ca3b3a1f51, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &1812404650
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1812404652}
+  - component: {fileID: 1812404651}
+  m_Layer: 0
+  m_Name: ConnectionManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1812404651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1812404650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef639b67ff99347479fe064c55b171ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handshake: 0
+  update: 0
+  connected: 0
+--- !u!4 &1812404652
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1812404650}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1563994860}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1864715893 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4407975034032588, guid: 9fccaf269a3d17c4dbffe3ca3b3a1f51,

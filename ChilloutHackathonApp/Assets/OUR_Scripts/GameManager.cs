@@ -8,8 +8,6 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     Transform[] playerCardsPoints;
     [SerializeField]
-    Transform cardsPoint;
-    [SerializeField]
     private RawConnectionManager connectionManager;
     [SerializeField]
     GameObject foldMsg;
@@ -17,14 +15,18 @@ public class GameManager : MonoBehaviour
     private bool handshake = false;
     private bool start = false;
     private List<GameObject> cards = new List<GameObject>();
-  
+    private MenuManager menuManager;
+
     private void Start ()
     {
-          
+        menuManager = FindObjectOfType<MenuManager>();
     }
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+            connectionManager.connected = true;
+
         if (connectionManager.connected)
         {
             if (start == false)
@@ -154,7 +156,7 @@ public class GameManager : MonoBehaviour
 
     private void StartGame()
     {
-        throw new NotImplementedException();
+        menuManager.PlayerConnected();
     }
 
 }
