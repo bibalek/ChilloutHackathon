@@ -16,7 +16,26 @@ public class GameManager : MonoBehaviour
     {
         StartCoroutine(ShowCards());    
     }
-   
+
+
+    public void Fold()
+    {
+        //Send pass to server
+    }
+
+    public void Raise()
+    {
+      
+    }
+    public void Check()
+    {
+        
+    }
+
+    public void Call()
+    {
+        
+    }
 
     public void SpawnCards(string cardsName)
     {
