@@ -49,15 +49,15 @@ namespace VRStandardAssets.Utils
         {
             //Gear VR does not currently support renderScale
 #if !UNITY_ANDROID
-            VRSettings.renderScale = m_RenderScale;
+            XRSettings.eyeTextureResolutionScale = m_RenderScale;
 #endif
 
 #if UNITY_STANDALONE
-            VRSettings.loadedDevice = VRDeviceType.Oculus;
+          //  XRSettings.loadedDeviceName = VRDeviceType.Oculus;
 #endif
             
 #if UNITY_PS4 && !UNITY_EDITOR
-		    VRSettings.loadedDevice = VRDeviceType.Morpheus;
+		  //  VRSettings.loadedDevice = VRDeviceType.Morpheus;
 #endif
 
             XRSettings.enabled = true;
