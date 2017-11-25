@@ -262,15 +262,15 @@ public class GameManager : MonoBehaviour
 
         colors = raiseButton.GetComponent<Button>().colors;
         colors.normalColor = connectionManager.ptpHeader.raise ? Color.white : Color.gray;
-        foldButton.GetComponent<BoxCollider>().enabled = connectionManager.ptpHeader.raise;
+        raiseButton.GetComponent<BoxCollider>().enabled = connectionManager.ptpHeader.raise;
 
         colors = checkButton.GetComponent<Button>().colors;
         colors.normalColor = connectionManager.ptpHeader.check ? Color.white : Color.gray;
-        foldButton.GetComponent<BoxCollider>().enabled = connectionManager.ptpHeader.check;
+        checkButton.GetComponent<BoxCollider>().enabled = connectionManager.ptpHeader.check;
 
         colors = callButton.GetComponent<Button>().colors;
         colors.normalColor = connectionManager.ptpHeader.call ? Color.white : Color.gray;
-        foldButton.GetComponent<BoxCollider>().enabled = connectionManager.ptpHeader.call;
+        callButton.GetComponent<BoxCollider>().enabled = connectionManager.ptpHeader.call;
        
     }
 
