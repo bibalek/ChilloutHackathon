@@ -88,6 +88,7 @@ public class GameManager : MonoBehaviour
             if (connectionManager.update)
             {
                 UpdateMoney();
+                UpdateButtons();
                 connectionManager.update = false;
                 if (connectionManager.ptpHeader.integer < 0)
                 {
@@ -101,7 +102,7 @@ public class GameManager : MonoBehaviour
                 {
                     CalcToCall(connectionManager.ptpHeader.pot);
                    
-                    UpdateButtons();
+                   
                 }
             }
         }   
