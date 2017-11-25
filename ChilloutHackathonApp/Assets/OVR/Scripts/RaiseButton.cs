@@ -10,11 +10,6 @@ public class RaiseButton : VRInteractiveItem
     [SerializeField]
     GameManager gameManager;
 
-    private void Update()
-    {
-        transform.LookAt(Camera.main.transform);
-    }
-
     public override void Click(Vector3 clickedPoint)
     {
         gameManager.Raise();

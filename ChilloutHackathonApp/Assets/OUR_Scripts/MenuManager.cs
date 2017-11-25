@@ -14,9 +14,18 @@ public class MenuManager : MonoBehaviour
     private float secondsToLightUp = 5;
     public MenuManager instance;
 
-    private IEnumerator Start()
+    public void PlayerConnected()
+    {
+        StartCoroutine(StartGameAnimations());
+    }
+
+    private void Start()
     {
         instance = this;
+    }
+
+    private IEnumerator StartGameAnimations()
+    {
         yield return new WaitForSecondsRealtime(secondsToLightUp);
         menuLight.SetActive(true);
         player.GetComponent<Animator>().SetTrigger("MainMenu");
