@@ -278,6 +278,9 @@ public class GameManager : MonoBehaviour
         moneyText.text = money.ToString();
         enemyMoneyText.text = enemyMoney.ToString();
         potText.text = pot.ToString();
+        myPotText.text = myPot.ToString();
+        enemyPotText.text = enemyPot.ToString();
+
     }
 
     private void CalcToCall(int deltaPot)
