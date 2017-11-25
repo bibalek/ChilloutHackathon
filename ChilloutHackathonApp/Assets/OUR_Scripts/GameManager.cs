@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
             connectionManager.connected = true;
 
-        if (connectionManager.connected)
+        if (!connectionManager.connected)
         {
             if (start == false)
             {
