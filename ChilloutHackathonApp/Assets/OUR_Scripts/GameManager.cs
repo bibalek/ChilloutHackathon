@@ -11,40 +11,58 @@ public class GameManager : MonoBehaviour
     Transform cardsPoint;
     [SerializeField]
     private RawConnectionManager connectionManager;
+    [SerializeField]
+    GameObject foldMsg;
 
     private bool handshake = false;
+    private bool start = false;
     private List<GameObject> cards = new List<GameObject>();
   
     private void Start ()
     {
-       // StartCoroutine(ShowCards());    
+          
     }
 
     private void Update()
     {
-        if (handshake == false && connectionManager.handshake)
+        if (connectionManager.connected)
         {
-            SpawnCards(connectionManager.serializer.cards);
-            Show2Cards();
-            handshake = true;
-        }
-        if (connectionManager.update)
-        {            
-            connectionManager.update = false;
-            if (connectionManager.ptpHeader.integer < 0)
+            if (start == false)
             {
-                if (connectionManager.ptpHeader.integer == -3) Show3Cards();
-                if (connectionManager.ptpHeader.integer == -4) Show4Cards();
-                if (connectionManager.ptpHeader.integer == -5) Show5Cards();
+                start = true;
+                StartGame();
             }
-        }
+            if (handshake == false && connectionManager.handshake)
+            {
+                SpawnCards(connectionManager.serializer.cards);
+                Show2Cards();
+                handshake = true;
+            }
+            if (connectionManager.update)
+            {
+                connectionManager.update = false;
+                if (connectionManager.ptpHeader.integer < 0)
+                {
+                    if (connectionManager.ptpHeader.integer == -3) Show3Cards();
+                    if (connectionManager.ptpHeader.integer == -4) Show4Cards();
+                    if (connectionManager.ptpHeader.integer == -5) Show5Cards();
+                    if (connectionManager.ptpHeader.integer == -10) NewRound();
+                }
+            }
+        }   
     }
 
+  
 
     public void Fold()
     {
-        //Send pass to server
+        PTPHeader msg = new PTPHeader(0, false, false, false, true, "");
+        string serializer = JsonUtility.ToJson(msg);
+        connectionManager.Send(serializer);
+        StartCoroutine(ShowFoldMsg());
     }
+
+   
 
     public void Raise()
     {
@@ -117,6 +135,26 @@ public class GameManager : MonoBehaviour
         Show4Cards();
         yield return new WaitForSeconds(1);
         Show5Cards();
+    }
+
+    private void NewRound()
+    {
+        connectionManager.handshake = false;
+    }
+
+    private IEnumerator ShowFoldMsg()
+    {
+        if (foldMsg != null)
+        {
+            foldMsg.SetActive(true);
+            yield return new WaitForSeconds(3);
+            foldMsg.SetActive(false);
+        }
+    }
+
+    private void StartGame()
+    {
+        throw new NotImplementedException();
     }
 
 }
