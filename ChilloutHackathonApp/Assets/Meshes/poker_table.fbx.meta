@@ -60,6 +60,7 @@ ModelImporter:
     100104: Tokens
     100106: Table
     100108: TableWood
+    100110: Table.001
     400000: Circle.112
     400002: Circle.120
     400004: Circle.121
@@ -115,6 +116,7 @@ ModelImporter:
     400104: Tokens
     400106: Table
     400108: TableWood
+    400110: Table.001
     2300000: Circle.112
     2300002: Circle.120
     2300004: Circle.121
@@ -305,6 +307,16 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: Material.001
     second: {fileID: 2100000, guid: f00e306ab24ed454587623eb8a051369, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Table
+    second: {fileID: 2100000, guid: b453b84ab03550042a0b3878c2a50d11, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TableWood
+    second: {fileID: 2100000, guid: d458447855ffc594890d7cec1ca11cc2, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
