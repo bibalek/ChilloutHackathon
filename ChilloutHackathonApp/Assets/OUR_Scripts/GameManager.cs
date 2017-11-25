@@ -295,6 +295,17 @@ public class GameManager : MonoBehaviour
         bet = minBet;
     }
 
+    public void RaiseBet(int value)
+    {
+        bet += value;
+        //CheckBet();
+    }
+
+    public void ResetBet()
+    {
+        bet = connectionManager.serializer.isBigBlind ? 25 : 50;
+    }
+
     private void CheckBet() //Sprawdzac po kliknieciu na suwak
     {
         if (bet > maxBet) bet = maxBet;
