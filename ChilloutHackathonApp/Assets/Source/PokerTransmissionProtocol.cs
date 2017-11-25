@@ -20,10 +20,11 @@ public class PTPHeader
     public bool call;
     public bool raise;
     public bool check;
-    public bool fold;      
+    public bool fold;
     public string str;
+    public int pot;
 
-    public PTPHeader(int integer, bool call, bool raise, bool check, bool fold, string str)
+    public PTPHeader(int integer, bool call, bool raise, bool check, bool fold, string str, int pot)
     {
         this.integer = integer;
         this.call = call;
@@ -31,5 +32,6 @@ public class PTPHeader
         this.check = check;
         this.fold = fold;
         this.str = str;
+        this.pot = pot;
     }
 }
