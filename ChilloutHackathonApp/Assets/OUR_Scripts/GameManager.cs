@@ -22,6 +22,10 @@ public class GameManager : MonoBehaviour
     GameObject callButton;
     [SerializeField]
     Text moneyText;
+    [SerializeField]
+    Text enemyMoneyText;
+    [SerializeField]
+    Text potText;
 
     private bool handshake = false;
     private bool start = false;
