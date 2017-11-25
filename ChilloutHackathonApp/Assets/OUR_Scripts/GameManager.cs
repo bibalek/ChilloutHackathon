@@ -26,6 +26,10 @@ public class GameManager : MonoBehaviour
     Text enemyMoneyText;
     [SerializeField]
     Text potText;
+    [SerializeField]
+    Text myPotText;
+    [SerializeField]
+    Text enemyPotText;
 
     private bool handshake = false;
     private bool start = false;
@@ -37,8 +41,10 @@ public class GameManager : MonoBehaviour
     public int bet = 25;
     public int minBet;
     public int maxBet;
-    public int pot = 75;
+    public int pot = 0;
     public bool isDealer = false;
+    public int deltaPot = 75;
+    public int enemyPot = 0;
     private int toCall;
 
 
@@ -64,12 +70,17 @@ public class GameManager : MonoBehaviour
                 SpawnCards(connectionManager.serializer.cards);
                 Show2Cards();
                 money = connectionManager.serializer.money;
-                
-                myPot = connectionManager.serializer.isBigBlind ? 50 : 25;
+
+                // myPot = connectionManager.serializer.isBigBlind ? 50 : 25;
+                myPot = 0;
+                deltaPot = 75;
                 isDealer = connectionManager.serializer.isDealer;
-                CalcToCall(pot);
+               
                 money -= connectionManager.serializer.isBigBlind ? 50 : 25;
+                myPot = connectionManager.serializer.isBigBlind ? 50 : 25; ;
                 enemyMoney -= connectionManager.serializer.isBigBlind ? 25 : 50;
+                enemyPot = connectionManager.serializer.isBigBlind ? 25 : 50;
+                CalcToCall(pot);
                 UpdateMoney();
                 handshake = true;
                 UpdatedBet();
@@ -100,7 +111,7 @@ public class GameManager : MonoBehaviour
 
     public void Fold()
     {
-        PTPHeader msg = new PTPHeader(0, false, false, false, true, "", pot);
+        PTPHeader msg = new PTPHeader(0, false, false, false, true, "", pot, deltaPot);
         string serializer = JsonUtility.ToJson(msg);
         connectionManager.Send(serializer);
         StartCoroutine(ShowFoldMsg());
@@ -112,16 +123,18 @@ public class GameManager : MonoBehaviour
     {
         CheckBet();
         myPot += bet;
-        pot += bet;
+        deltaPot += bet;
         money -= bet;
-        PTPHeader msg = new PTPHeader(0, false, true, false, false, "", pot);
+       
+        PTPHeader msg = new PTPHeader(0, false, true, false, false, "", pot, deltaPot);
         string serializer = JsonUtility.ToJson(msg);
         connectionManager.Send(serializer);
+
         StartCoroutine(ShowFoldMsg());
     }
     public void Check()
     {
-        PTPHeader msg = new PTPHeader(0, false, false, true, false, "", pot);
+        PTPHeader msg = new PTPHeader(0, false, false, true, false, "", pot, deltaPot);
         string serializer = JsonUtility.ToJson(msg);
         connectionManager.Send(serializer);
         StartCoroutine(ShowFoldMsg());
@@ -132,20 +145,20 @@ public class GameManager : MonoBehaviour
         if ( money < toCall )
         {
             myPot += money;
-            pot += money;
+            deltaPot += money;
             money -= money;
-
-            PTPHeader msg = new PTPHeader(-13, true, false, false, false, "", pot);
+           
+            PTPHeader msg = new PTPHeader(-13, true, false, false, false, "", pot, deltaPot);
             string serializer = JsonUtility.ToJson(msg);
             connectionManager.Send(serializer);
         }
         else
         {
             myPot += toCall;
-            pot += toCall;
+            deltaPot += toCall;
             money -= toCall;
 
-            PTPHeader msg = new PTPHeader(0, true, false, false, false, "", pot);
+            PTPHeader msg = new PTPHeader(0, true, false, false, false, "", pot, deltaPot);
             string serializer = JsonUtility.ToJson(msg);
             connectionManager.Send(serializer);
         }      
@@ -182,18 +195,24 @@ public class GameManager : MonoBehaviour
     {               
         for (int i=2; i<5; i++) 
         {
-            cards[i].SetActive(true);         
+            cards[i].SetActive(true);
+            pot += deltaPot;
+            UpdateMoney();
         }  
     }
 
     public void Show4Cards()
     {       
         cards[5].SetActive(true);
+        pot += deltaPot;
+        UpdateMoney();
     }
 
     public void Show5Cards()
     {
         cards[6].SetActive(true);
+        pot += deltaPot;
+        UpdateMoney();
     }
 
     public void ShowEnemyCards()
@@ -261,14 +280,17 @@ public class GameManager : MonoBehaviour
         potText.text = pot.ToString();
     }
 
-    private void CalcToCall(int pot)
+    private void CalcToCall(int deltaPot)
     {
-        int enemyPot = pot - myPot;
+        enemyPot = deltaPot - myPot;
         toCall = enemyPot - myPot;
     }
 
     private void EndRound()
     {
+        pot += deltaPot;
+        UpdateMoney();
+        StartCoroutine(WaitForScore());
         if (connectionManager.ptpHeader.call)  // hasdealerwon ?
         {
             if(isDealer)
@@ -282,6 +304,11 @@ public class GameManager : MonoBehaviour
                 enemyMoney += pot;
             }
         }          
+    }
+
+    private IEnumerator WaitForScore()
+    {
+        yield return new WaitForSeconds(2);
     }
 
     private void UpdatedBet()
