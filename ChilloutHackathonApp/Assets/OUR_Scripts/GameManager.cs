@@ -27,6 +27,16 @@ public class GameManager : MonoBehaviour
     private bool start = false;
     private List<GameObject> cards = new List<GameObject>();
     private MenuManager menuManager;
+    private int myPot = 0;
+    private int money = 1000;
+    public int enemyMoney = 1000;
+    public int bet = 25;
+    public int minBet;
+    public int maxBet;
+    public int pot = 75;
+    public bool isDealer = false;
+    private int toCall;
+
 
     private void Start ()
     {
@@ -49,7 +59,14 @@ public class GameManager : MonoBehaviour
             {
                 SpawnCards(connectionManager.serializer.cards);
                 Show2Cards();
+                UpdateMoney(connectionManager.serializer.money);
+                myPot = connectionManager.serializer.isBigBlind ? 50 : 25;
+                isDealer = connectionManager.serializer.isDealer;
+                CalcToCall(pot);
+                money -= connectionManager.serializer.isBigBlind ? 50 : 25;
+                enemyMoney -= connectionManager.serializer.isBigBlind ? 25 : 50;
                 handshake = true;
+                UpdatedBet();
             }
             if (connectionManager.update)
             {
@@ -59,22 +76,24 @@ public class GameManager : MonoBehaviour
                     if (connectionManager.ptpHeader.integer == -3) Show3Cards();
                     if (connectionManager.ptpHeader.integer == -4) Show4Cards();
                     if (connectionManager.ptpHeader.integer == -5) Show5Cards();
-                    if (connectionManager.ptpHeader.integer == -10) NewRound();
+                    if (connectionManager.ptpHeader.integer == -10) NewRound(); //fold
+                    if (connectionManager.ptpHeader.integer == -20) EndRound();
                 }
                 else
                 {
-                    UpdateMoney();
+                    CalcToCall(connectionManager.ptpHeader.pot);
+                   
                     UpdateButtons();
                 }
             }
         }   
     }
 
-   
+  
 
     public void Fold()
     {
-        PTPHeader msg = new PTPHeader(0, false, false, false, true, "");
+        PTPHeader msg = new PTPHeader(0, false, false, false, true, "", pot);
         string serializer = JsonUtility.ToJson(msg);
         connectionManager.Send(serializer);
         StartCoroutine(ShowFoldMsg());
@@ -84,14 +103,18 @@ public class GameManager : MonoBehaviour
 
     public void Raise()
     {
-        PTPHeader msg = new PTPHeader(0, false, true, false, false, "");
+        CheckBet();
+        myPot += bet;
+        pot += bet;
+        money -= bet;
+        PTPHeader msg = new PTPHeader(0, false, true, false, false, "", pot);
         string serializer = JsonUtility.ToJson(msg);
         connectionManager.Send(serializer);
         StartCoroutine(ShowFoldMsg());
     }
     public void Check()
     {
-        PTPHeader msg = new PTPHeader(0, false, false, true, false, "");
+        PTPHeader msg = new PTPHeader(0, false, false, true, false, "", pot);
         string serializer = JsonUtility.ToJson(msg);
         connectionManager.Send(serializer);
         StartCoroutine(ShowFoldMsg());
@@ -99,9 +122,26 @@ public class GameManager : MonoBehaviour
 
     public void Call()
     {
-        PTPHeader msg = new PTPHeader(0,true,false,false,false, "");
-        string serializer = JsonUtility.ToJson(msg);
-        connectionManager.Send(serializer);
+        if ( money < toCall )
+        {
+            myPot += money;
+            pot += money;
+            money -= money;
+
+            PTPHeader msg = new PTPHeader(-13, true, false, false, false, "", pot);
+            string serializer = JsonUtility.ToJson(msg);
+            connectionManager.Send(serializer);
+        }
+        else
+        {
+            myPot += toCall;
+            pot += toCall;
+            money -= toCall;
+
+            PTPHeader msg = new PTPHeader(0, true, false, false, false, "", pot);
+            string serializer = JsonUtility.ToJson(msg);
+            connectionManager.Send(serializer);
+        }      
     }
 
     public void SpawnCards(string cardsName)
@@ -155,7 +195,7 @@ public class GameManager : MonoBehaviour
         cards[8].SetActive(true);
     }
 
-    private IEnumerator ShowCards()
+    private IEnumerator ShowCards() //only for test
     {
         SpawnCards("2C;TD;4C;KH;7C;8H;AC;3C;5C");
         Show2Cards();
@@ -207,9 +247,53 @@ public class GameManager : MonoBehaviour
        
     }
 
-    private void UpdateMoney()
+    private void UpdateMoney(int newMoney)
     {
-        //moneyText.text = connectionManager.ptpHeader.money.ToString();
+        money = newMoney;
+        moneyText.text = newMoney.ToString();
     }
 
+    private void CalcToCall(int pot)
+    {
+        int enemyPot = pot - myPot;
+        toCall = enemyPot - myPot;
+    }
+
+    private void EndRound()
+    {
+        if (connectionManager.ptpHeader.call)  // hasdealerwon ?
+        {
+            if(isDealer)
+            {
+                money += pot;
+                enemyMoney -= pot;
+            }
+            else
+            {
+                money -= pot;
+                enemyMoney += pot;
+            }
+        }          
+    }
+
+    private void UpdatedBet()
+    {
+        minBet = toCall;
+        if (enemyMoney > money)
+        {
+            maxBet = money;
+        }
+        else
+        {
+            maxBet = enemyMoney;
+        }
+       
+        bet = minBet;
+    }
+
+    private void CheckBet() //Sprawdzac po kliknieciu na suwak
+    {
+        if (bet > maxBet) bet = maxBet;
+        if (bet < minBet) bet = minBet;
+    }
 }
