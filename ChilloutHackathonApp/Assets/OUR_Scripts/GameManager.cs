@@ -9,12 +9,35 @@ public class GameManager : MonoBehaviour
     Transform[] playerCardsPoints;
     [SerializeField]
     Transform cardsPoint;
+    [SerializeField]
+    private RawConnectionManager connectionManager;
 
+    private bool handshake = false;
     private List<GameObject> cards = new List<GameObject>();
   
     private void Start ()
     {
-        StartCoroutine(ShowCards());    
+       // StartCoroutine(ShowCards());    
+    }
+
+    private void Update()
+    {
+        if (handshake == false && connectionManager.handshake)
+        {
+            SpawnCards(connectionManager.serializer.cards);
+            Show2Cards();
+            handshake = true;
+        }
+        if (connectionManager.update)
+        {            
+            connectionManager.update = false;
+            if (connectionManager.ptpHeader.integer < 0)
+            {
+                if (connectionManager.ptpHeader.integer == -3) Show3Cards();
+                if (connectionManager.ptpHeader.integer == -4) Show4Cards();
+                if (connectionManager.ptpHeader.integer == -5) Show5Cards();
+            }
+        }
     }
 
 
@@ -34,7 +57,9 @@ public class GameManager : MonoBehaviour
 
     public void Call()
     {
-        
+        PTPHeader msg = new PTPHeader(0,true,false,false,false, "");
+        string serializer = JsonUtility.ToJson(msg);
+        connectionManager.Send(serializer);
     }
 
     public void SpawnCards(string cardsName)
@@ -43,13 +68,16 @@ public class GameManager : MonoBehaviour
         String[] cardNames = cardsName.Split(delimiter);
         for (int i = 0; i < cardNames.Length; i++)
         {
-            var card = (GameObject)Instantiate(Resources.Load("Cards/" + cardNames[i]));
-            var cardParent = new GameObject();
-            card.transform.parent = cardParent.transform;
-            cards.Add(cardParent);
-            cards[i].transform.position = playerCardsPoints[i].position;
-            cards[i].transform.rotation = playerCardsPoints[i].rotation;
-            cards[i].SetActive(false);
+            if (cardNames[i].Length > 0)
+            {
+                var card = (GameObject)Instantiate(Resources.Load("Cards/" + cardNames[i]));
+                var cardParent = new GameObject();
+                card.transform.parent = cardParent.transform;
+                cards.Add(cardParent);
+                cards[i].transform.position = playerCardsPoints[i].position;
+                cards[i].transform.rotation = playerCardsPoints[i].rotation;
+                cards[i].SetActive(false);
+            }           
         }
     }
 

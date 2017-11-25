@@ -11,10 +11,19 @@ public class RawConnectionManager : MonoBehaviour
     private NetworkStream networkStream;
     private StreamWriter streamWriter;
     private StreamReader streamReader;
+    public PTPHandshake serializer;
+    public PTPHeader ptpHeader;
+    public bool handshake = false;
+    public bool update = false;
 
     public bool connected;
 
     private readonly Queue<string> data = new Queue<string>();
+
+    private void Start()
+    {
+        CreateConnection("10.5.0.44");
+    }
 
     public void Send(string msg)
     {
@@ -74,10 +83,23 @@ public class RawConnectionManager : MonoBehaviour
             try
             {
                 string theString = streamReader.ReadLine();
+                
                 lock (data)
                 {
                     data.Enqueue(theString);
                 }
+                if (handshake == false)
+                {
+                    serializer = JsonUtility.FromJson<PTPHandshake>(theString);
+                    handshake = true;
+                }
+                else
+                {
+                    ptpHeader = JsonUtility.FromJson<PTPHeader>(theString);
+                    update = true;
+                }
+
+
                 Debug.Log("Message recieved by client:" + theString);
             }
             catch
