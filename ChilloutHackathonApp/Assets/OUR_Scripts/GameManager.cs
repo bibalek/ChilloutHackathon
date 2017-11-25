@@ -280,7 +280,15 @@ public class GameManager : MonoBehaviour
     private void UpdatedBet()
     {
         minBet = toCall;
-        maxBet = enemyMoney;
+        if (enemyMoney > money)
+        {
+            maxBet = money;
+        }
+        else
+        {
+            maxBet = enemyMoney;
+        }
+       
         bet = minBet;
     }
 
