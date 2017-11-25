@@ -6,14 +6,8 @@ using VRStandardAssets.Utils;
 
 public class FoldButton : VRInteractiveItem
 {
-
     [SerializeField]
     GameManager gameManager;
-
-    private void Update()
-    {
-        transform.LookAt(Camera.main.transform);
-    }
 
     public override void Click(Vector3 clickedPoint)
     {
