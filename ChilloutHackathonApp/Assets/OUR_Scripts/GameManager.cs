@@ -31,7 +31,6 @@ public class GameManager : MonoBehaviour
     private void Start ()
     {
         menuManager = FindObjectOfType<MenuManager>();
-        StartCoroutine(ShowCards());
     }
 
     private void Update()
@@ -39,7 +38,7 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
             connectionManager.connected = true;
 
-        if (!connectionManager.connected)
+        if (connectionManager.connected)
         {
             if (start == false)
             {
