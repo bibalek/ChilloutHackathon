@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class MenuManager : MonoBehaviour
 {
@@ -10,9 +11,15 @@ public class MenuManager : MonoBehaviour
     public GameObject table;
     public GameObject menu;
     public List<GameObject> lights;
+    public List<GameObject> tableComponents;
 
     private float secondsToLightUp = 5;
     public MenuManager instance;
+
+    [SerializeField, HideInInspector]
+    private UnityEvent showCards;
+
+    public UnityEvent ShowCards { get { return showCards; } set { showCards = value; } }
 
     public void PlayerConnected()
     {
@@ -52,6 +59,15 @@ public class MenuManager : MonoBehaviour
             yield return new WaitForSecondsRealtime(0.15f);
         }
         menuLight.SetActive(true);
+        EnableTableComponents();
+        showCards.Invoke();
     }
-
+    
+    private void EnableTableComponents()
+    {
+        foreach(GameObject tableComponent in tableComponents)
+        {
+            tableComponent.SetActive(true);
+        }
+    }
 }

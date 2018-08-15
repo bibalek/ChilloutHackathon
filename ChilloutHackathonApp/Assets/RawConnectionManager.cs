@@ -22,7 +22,7 @@ public class RawConnectionManager : MonoBehaviour
 
     private void Start()
     {
-        CreateConnection("10.5.0.44");
+        //CreateConnection("10.5.0.44");
     }
 
     public void Send(string msg)

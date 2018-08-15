@@ -50,7 +50,14 @@ public class GameManager : MonoBehaviour
 
     private void Start ()
     {
+
         menuManager = FindObjectOfType<MenuManager>();
+        menuManager.ShowCards.AddListener(ShowStartCards);
+    }
+
+    private void ShowStartCards()
+    {
+        StartCoroutine(ShowCards());
     }
 
     private void Update()
@@ -58,36 +65,39 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
             connectionManager.connected = true;
 
-        if (connectionManager.connected)
-        {
+ //       if (connectionManager.connected)
+//        {
             if (start == false)
             {
                 start = true;
                 StartGame();
             }
-            if (handshake == false && connectionManager.handshake)
+            //if (handshake == false && connectionManager.handshake)
+            if (handshake == false)
             {
-                SpawnCards(connectionManager.serializer.cards);
-                Show2Cards();
-                money = connectionManager.serializer.money;
+            //SpawnCards(connectionManager.serializer.cards);
+          
+            //SpawnCards("AD;KD");
+                //Show2Cards();
+                //money = connectionManager.serializer.money;
 
                 // myPot = connectionManager.serializer.isBigBlind ? 50 : 25;
-                myPot = 0;
-                deltaPot = 75;
-                isDealer = connectionManager.serializer.isDealer;
+                //myPot = 0;
+                //deltaPot = 75;
+                //isDealer = connectionManager.serializer.isDealer;
                
-                money -= connectionManager.serializer.isBigBlind ? 50 : 25;
-                myPot = connectionManager.serializer.isBigBlind ? 50 : 25; ;
-                enemyMoney -= connectionManager.serializer.isBigBlind ? 25 : 50;
-                enemyPot = connectionManager.serializer.isBigBlind ? 25 : 50;
-                CalcToCall(pot);
-                UpdateMoney();
+                //money -= connectionManager.serializer.isBigBlind ? 50 : 25;
+                //myPot = connectionManager.serializer.isBigBlind ? 50 : 25; ;
+                //enemyMoney -= connectionManager.serializer.isBigBlind ? 25 : 50;
+                //enemyPot = connectionManager.serializer.isBigBlind ? 25 : 50;
+                //CalcToCall(pot);
+                //UpdateMoney();
                 handshake = true;
-                UpdatedBet();
+                //UpdatedBet();
             }
             if (connectionManager.update)
             {
-                UpdateMoney();
+                //UpdateMoney();
                 UpdateButtons();
                 connectionManager.update = false;
                 if (connectionManager.ptpHeader.integer < 0)
@@ -105,7 +115,7 @@ public class GameManager : MonoBehaviour
                    
                 }
             }
-        }   
+//        }   
     }
 
   
@@ -176,6 +186,7 @@ public class GameManager : MonoBehaviour
                 var card = (GameObject)Instantiate(Resources.Load("Cards/" + cardNames[i]));
                 var cardParent = new GameObject();
                 card.transform.parent = cardParent.transform;
+                //card.transform.parent = playerCardsPoints[i].transform;
                 cards.Add(cardParent);
                 cards[i].transform.position = playerCardsPoints[i].position;
                 cards[i].transform.rotation = playerCardsPoints[i].rotation;
@@ -198,7 +209,7 @@ public class GameManager : MonoBehaviour
         {
             cards[i].SetActive(true);
             pot += deltaPot;
-            UpdateMoney();
+            //UpdateMoney();
         }  
     }
 
@@ -206,14 +217,14 @@ public class GameManager : MonoBehaviour
     {       
         cards[5].SetActive(true);
         pot += deltaPot;
-        UpdateMoney();
+        //UpdateMoney();
     }
 
     public void Show5Cards()
     {
         cards[6].SetActive(true);
         pot += deltaPot;
-        UpdateMoney();
+        //UpdateMoney();
     }
 
     public void ShowEnemyCards()
@@ -222,15 +233,19 @@ public class GameManager : MonoBehaviour
         cards[8].SetActive(true);
     }
 
-    private IEnumerator ShowCards() //only for test
+    public IEnumerator ShowCards() //only for test
     {
         SpawnCards("2C;TD;4C;KH;7C;8H;AC;3C;5C");
         Show2Cards();
+        Debug.Log("elo");
         yield return new WaitForSeconds(1);
+        Debug.Log("elo");
         Show3Cards();
         yield return new WaitForSeconds(1);
+        Debug.Log("elo");
         Show4Cards();
         yield return new WaitForSeconds(1);
+        Debug.Log("elo");
         Show5Cards();
     }
 
@@ -296,7 +311,7 @@ public class GameManager : MonoBehaviour
     private void EndRound()
     {
         pot += deltaPot;
-        UpdateMoney();
+        //UpdateMoney();
         StartCoroutine(WaitForScore());
         if (connectionManager.ptpHeader.call)  // hasdealerwon ?
         {
